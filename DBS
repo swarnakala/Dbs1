@@ -1,0 +1,60 @@
+package com.Dbs.qa;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class Dbs {
+
+	public static void main(String[] args) throws InterruptedException {
+
+		System.setProperty("webdriver.chrome.driver", "F:\\chromedriver.exe");
+
+		WebDriver driver = new ChromeDriver();
+		WebDriverWait wdw=new WebDriverWait(driver, Duration.ofSeconds(20));
+
+		driver.navigate().to("https://www.dbs.com.sg/personal/default.page");
+
+		driver.manage().window().maximize();
+
+		driver.findElement(By.linkText("Cards")).click();
+
+		driver.findElement(By.linkText("Credit Cards")).click();
+		wdw.until(ExpectedConditions.elementToBeClickable(
+				By.xpath("//script[@id='creditCardAllTypeDetails']/following-sibling::div[1]//label/div[text()='Compare']")));
+		
+		  List<String> card_titles_before=new ArrayList<String>();
+		  List<String> card_titles_after=new ArrayList<String>();
+		  card_titles_before.add(driver.findElement(By.xpath("//script[@id='creditCardAllTypeDetails']/following-sibling::div[1]//div[contains(@class,'header')]/div")).getText());
+		  driver.findElement(By.xpath("//script[@id='creditCardAllTypeDetails']/following-sibling::div[1]//label/div[text()='Compare']")).click();
+
+		  ((JavascriptExecutor)driver).executeScript("window.scrollBy(0,200)");
+		  card_titles_before.add(driver.findElement(By.xpath("//script[@id='creditCardAllTypeDetails']/following-sibling::div[2]//div[contains(@class,'header')]/div")).getText());
+		  driver.findElement(By.xpath("//script[@id='creditCardAllTypeDetails']/following-sibling::div[2]//label/div[text()='Compare']")).click();
+
+		  driver.findElement(By.id("cardCompareBtn")).click();
+		  System.out.println("Cards list size: "+card_titles_before);
+		  
+		  
+		  card_titles_after.add(driver.findElement(By.xpath("//div[@id='comparisonResults']/div[1]/div[contains(@class,'header')]/div")).getText());
+		  card_titles_after.add(driver.findElement(By.xpath("//div[@id='comparisonResults']/div[2]/div[contains(@class,'header')]/div")).getText());
+		  System.out.println("Cards list size after: "+card_titles_after);
+		  
+		  if(card_titles_before.containsAll(card_titles_after)) {
+			  System.out.println("Selected cards are displayed");}
+		  else {System.out.println("Wrong cards are displayed");}
+		  	  
+			 
+
+	}
+
+}
